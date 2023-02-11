@@ -1,0 +1,20 @@
+version: '3.8'
+
+volumes:
+    khorsorb_data:
+
+
+services:
+    mysql:
+        container_name: khorsorb-database
+        image: mysql:8
+        restart: unless-stopped
+        ports:
+            - 3306:3306
+        environment:
+            - MYSQL_DATABASE=khorsorb
+            - MYSQL_USER=local
+            - MYSQL_PASSWORD=local
+            - MYSQL_ROOT_PASSWORD=local
+        volumes:
+            - exam_data:/var/lib/mysql
