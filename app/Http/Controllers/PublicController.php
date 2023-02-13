@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Controller extends BaseController
 {
@@ -15,15 +16,18 @@ class Controller extends BaseController
 
 class PublicController extends Controller {
     public function getResults($studentId) {
-        return 'ok';
+        $results = DB::select('select * from results');
+        return $results;
     }
 
     public function getExams() {
-        return 'ok';
+        $exams = DB::select('select * from exam');
+        return $exams;
     }
 
     public function getQuestions($examId) {
-        return 'ok';
+        $questions = DB::select('select * from question where examId = ?', [$examId]);
+        return $questions;
     }
 
     // $examId, $groupId, $answers -> { $questionId, $answer }
@@ -33,6 +37,20 @@ class PublicController extends Controller {
         $examId = $body['examId'];
         $groupId = $body['groupId'];
         $answers = $body['answers'];
+
+        $exam = DB::select('select * from exams where id = ?', [$examId]);
+        $questions = DB::select('select * from questions where exam_id = ?', [$examId]);
+        $score = 0;
+        foreach ($questions as $question) {
+            $questionId = $question->id;
+            $correctAnswer = $question->correct_answer;
+            $answer = $answers[$questionId];
+            if ($answer == $correctAnswer) {
+                $score++;
+            }
+        }
+
+        return DB::insert('insert into examSubmit (examName, examId, groupId, originalAnswers, answers, point) values (?, ?, ?, ?, ?, ?)', [$exam['examName'], $exam['id'], $groupId, $question, $answer,$score]);
     }
 
     //$studentId, $studentName, $studentBranch
@@ -42,5 +60,6 @@ class PublicController extends Controller {
         $studentId = $body['studentId'];
         $studentName = $body['studentName'];
         $studentBranch = $body['studentBranch'];
+        return DB::insert('insert into submitGroup (studentId, studentName, studentBranch) values (?, ?, ?)', [$studentId, $studentName, $studentBranch]);
     }
 }

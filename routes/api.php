@@ -19,7 +19,6 @@ Route::get('/v1/admin/stats', [AdminController::class, 'getStats']);
 
 Route::get('/v1/admin/results', [AdminController::class, 'getAdminResults']);
 
-
 Route::post('/v1/admin/login', [AdminController::class, 'adminLogin']);
 
 Route::post('/v1/admin/exam/create', [AdminController::class, 'createExam']);
