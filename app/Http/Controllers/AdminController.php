@@ -16,11 +16,28 @@ class Controller extends BaseController
 
 class AdminController extends Controller {
     public function getStats() {
-        return 'ok';
+        $examCount = DB::select('select count(*) as count from exam')[0]->count;
+        $questionCount = DB::select('select count(*) as count from question')[0]->count;
+        return $examCount;
     }
 
     public function getAdminResults() {
-        return 'ok';
+        $groups = DB::select('select * from submitGroup');
+        $submits = DB::select('select * from examSubmit');
+        $results = [];
+        foreach ($groups as $group) {
+            $groupId = $group->id;
+            $groupSubmits = [];
+            foreach ($submits as $submit) {
+                if ($submit->groupId == $groupId) {
+                    $groupSubmits[] = $submit;
+                }
+            }
+            $group->submits = $groupSubmits;
+            $results[] = $group;
+        }
+
+        return $results;
     }
 
     public function adminLogin(Request $request) {
@@ -29,7 +46,7 @@ class AdminController extends Controller {
         $username = $body['username'];
         $password = $body['password'];
 
-        return 'qwioueroeriughenfgjnjgdkrnjkdvnjklsd';
+        return 'qwertyuiop' + $username + ':' + $password;
     }
 
     public function createExam(Request $request) {
@@ -120,7 +137,7 @@ class AdminController extends Controller {
         DB::update('update question set text = ?, choice1 = ?, choice2 = ?, answer = ? where id = ?', [$text, $choice1, $choice2, $answer, $questionId]);
         $updatedQuestion = DB::select('select * from question where id = ?', [$questionId])[0];
 
-        return $updatedQuestion;
+        return $updaqweqwetedQuestion;
     }
 
     public function deleteQuestion(Request $request) {
@@ -157,11 +174,11 @@ class AdminController extends Controller {
         $studentName = $data['studentName'];
         $studentBranch = $data['studentBranch'];
 
-        $groupExist = DB::select('select * from group where id = ?', [$groupId]);
+        $groupExist = DB::select('select * from submitGroup where id = ?', [$groupId]);
         if (!$groupExist) {
             return 'group not exist';
         }
-        DB::update('update group set studentId = ?, studentName = ?, studentBranch = ? where id = ?', [$studentId, $studentName, $studentBranch, $groupId]);
+        DB::update('update submitGroup set studentId = ?, studentName = ?, studentBranch = ? where id = ?', [$studentId, $studentName, $studentBranch, $groupId]);
         $updatedGroup = DB::select('select * from group where id = ?', [$groupId])[0];
 
         return $updatedGroup;
@@ -172,11 +189,11 @@ class AdminController extends Controller {
         $body = json_decode($input, true);
         $groupId = $body['groupId'];
 
-        $groupExist = DB::select('select * from group where id = ?', [$groupId]);
+        $groupExist = DB::select('select * from submitGroup where id = ?', [$groupId]);
         if (!$groupExist) {
             return 'group not exist';
         }
-        DB::delete('delete from group where id = ?', [$groupId]);
+        DB::delete('delete from submitGroup where id = ?', [$groupId]);
 
         return 'group deleted';
     }

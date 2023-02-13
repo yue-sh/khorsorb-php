@@ -38,19 +38,31 @@ class PublicController extends Controller {
         $groupId = $body['groupId'];
         $answers = $body['answers'];
 
-        $exam = DB::select('select * from exams where id = ?', [$examId]);
-        $questions = DB::select('select * from questions where exam_id = ?', [$examId]);
         $score = 0;
+        $group = DB::select('select * from submitGroup where id = ?', [$groupId]);
+        if (!$group) {
+            return 'group not found';
+        }
+        $exam = json_decode(json_encode(DB::select('select * from exam where id = ?', [$examId])[0]), true);
+        $questions = json_decode(json_encode(DB::select('select * from question where examId = ?', [$examId])), true);
         foreach ($questions as $question) {
-            $questionId = $question->id;
-            $correctAnswer = $question->correct_answer;
-            $answer = $answers[$questionId];
+            $questionId = $question['id'];
+            $correctAnswer = $question['answer'];
+            foreach ($answers as $answer) {
+                if ($answer['questionId'] == $questionId) {
+                    $answer = $answer['answer'];
+                    break;
+                }
+            }
             if ($answer == $correctAnswer) {
                 $score++;
             }
         }
+        $questions = json_encode($questions);
+        $answers = json_encode($answers);
+        DB::insert('insert into examSubmit (examId, groupId, point, originalAnswers, answers) values (?, ?, ?, ?, ?)', [$exam['id'], $groupId, $score, $questions, $answers]);
 
-        return DB::insert('insert into examSubmit (examName, examId, groupId, originalAnswers, answers, point) values (?, ?, ?, ?, ?, ?)', [$exam['examName'], $exam['id'], $groupId, $question, $answer,$score]);
+        return 'exam submitted';
     }
 
     //$studentId, $studentName, $studentBranch
@@ -60,6 +72,14 @@ class PublicController extends Controller {
         $studentId = $body['studentId'];
         $studentName = $body['studentName'];
         $studentBranch = $body['studentBranch'];
-        return DB::insert('insert into submitGroup (studentId, studentName, studentBranch) values (?, ?, ?)', [$studentId, $studentName, $studentBranch]);
+
+        $exist = DB::select('select * from submitGroup where studentId = ?', [$studentId]);
+        if ($exist) {
+            return 'group already exist';
+        }
+        DB::insert('insert into submitGroup (studentId, studentName, studentBranch) values (?, ?, ?)', [$studentId, $studentName, $studentBranch]);
+        $group = DB::select('select * from submitGroup where studentId = ?', [$studentId])[0];
+
+        return $group;
     }
 }
