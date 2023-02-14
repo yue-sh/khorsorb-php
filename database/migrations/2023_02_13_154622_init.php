@@ -7,18 +7,13 @@ use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('exam', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            // $table->json('questions')->default(new Expression('(JSON_ARRAY())'));
-            // $table->json('answers')->default(new Expression('(JSON_ARRAY())'));
+
+            $table->timestampsTz($precision = 0); // created_at updated_at
         });
 
         Schema::create('question', function (Blueprint $table) {
@@ -29,6 +24,7 @@ return new class extends Migration
             $table->boolean('answer');
 
             $table->string('examId');
+            $table->timestampsTz($precision = 0);
         });
 
         Schema::create('submitGroup', function (Blueprint $table) {
@@ -36,6 +32,8 @@ return new class extends Migration
             $table->string('studentId');
             $table->string('studentName');
             $table->string('studentBranch');
+
+            $table->timestampsTz($precision = 0);
         });
 
         Schema::create('examSubmit', function (Blueprint $table) {
@@ -45,16 +43,8 @@ return new class extends Migration
             $table->json('originalAnswers')->default(new Expression('(JSON_ARRAY())'));
             $table->string('examId');
             $table->string('groupId');
-        });
-    }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
+            $table->timestampsTz($precision = 0);
+        });
     }
 };
