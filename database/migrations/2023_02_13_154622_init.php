@@ -13,7 +13,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
 
-            $table->timestampsTz($precision = 0); // created_at updated_at
+            $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
 
         Schema::create('question', function (Blueprint $table) {
@@ -24,7 +25,8 @@ return new class extends Migration
             $table->boolean('answer');
 
             $table->string('examId');
-            $table->timestampsTz($precision = 0);
+            $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
 
         Schema::create('submitGroup', function (Blueprint $table) {
@@ -33,7 +35,8 @@ return new class extends Migration
             $table->string('studentName');
             $table->string('studentBranch');
 
-            $table->timestampsTz($precision = 0);
+            $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
 
         Schema::create('examSubmit', function (Blueprint $table) {
@@ -44,7 +47,8 @@ return new class extends Migration
             $table->string('examId');
             $table->string('groupId');
 
-            $table->timestampsTz($precision = 0);
+            $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
     }
 };

@@ -18,7 +18,18 @@ class AdminController extends Controller {
     public function getStats() {
         $examCount = DB::select('select count(*) as count from exam')[0]->count;
         $questionCount = DB::select('select count(*) as count from question')[0]->count;
-        return $examCount;
+        $examSubmitCount = DB::select('select count(*) as count from examSubmit')[0]->count;
+        $examSubmit = DB::select('select * from examSubmit');
+        $submitGroup = DB::select('select * from submitGroup');
+        $stats = array(
+            "examCount" => $examCount,
+            "questionCount" => $questionCount,
+            "examSubmitCount" => $examSubmitCount,
+            "examSubmit" => $examSubmit,
+            "submitGroup" => $submitGroup
+        );
+
+        return $stats;
     }
 
     public function getAdminResults() {
@@ -46,7 +57,7 @@ class AdminController extends Controller {
         $username = $body['username'];
         $password = $body['password'];
 
-        return 'qwertyuiop' + $username + ':' + $password;
+        return 'ok';
     }
 
     public function createExam(Request $request) {
