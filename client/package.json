@@ -1,0 +1,31 @@
+{
+	"name": "@exam/client",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"build:prod": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"@chakra-ui/icons": "^2.0.17",
+		"@chakra-ui/react": "^2.4.9",
+		"@emotion/react": "^11.10.5",
+		"@emotion/styled": "^11.10.5",
+		"chart.js": "^4.2.0",
+		"framer-motion": "^8.5.4",
+		"next": "13.1.6",
+		"react": "18.2.0",
+		"react-chartjs-2": "^5.2.0",
+		"react-dom": "18.2.0",
+		"react-icons": "^4.7.1"
+	},
+	"devDependencies": {
+		"@types/node": "18.14.0",
+		"@types/react": "18.0.27",
+		"@types/react-dom": "18.0.10",
+		"typescript": "4.9.5"
+	}
+}

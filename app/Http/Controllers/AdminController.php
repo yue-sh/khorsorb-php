@@ -14,25 +14,55 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }
 
-class AdminController extends Controller {
-    public function getStats() {
+class AdminController extends Controller
+{
+    public function getStats()
+    {
         $examCount = DB::select('select count(*) as count from exam')[0]->count;
         $questionCount = DB::select('select count(*) as count from question')[0]->count;
         $examSubmitCount = DB::select('select count(*) as count from examSubmit')[0]->count;
         $examSubmit = DB::select('select * from examSubmit');
         $submitGroup = DB::select('select * from submitGroup');
+        //Get monday to sunday of this week and submit count to array to make chart js
+        $weekSubmitCount = [];
+        $week = [];
+        $week[0] = date('Y-m-d', strtotime('monday this week'));
+        $week[1] = date('Y-m-d', strtotime('tuesday this week'));
+        $week[2] = date('Y-m-d', strtotime('wednesday this week'));
+        $week[3] = date('Y-m-d', strtotime('thursday this week'));
+        $week[4] = date('Y-m-d', strtotime('friday this week'));
+        $week[5] = date('Y-m-d', strtotime('saturday this week'));
+        $week[6] = date('Y-m-d', strtotime('sunday this week'));
+        for ($i = 0; $i < 7; $i++) {
+            $weekSubmitCount[$i] = DB::select('select count(*) as count from examSubmit where created_at like ?', [$week[$i] . '%'])[0]->count;
+        }
+        //examSubmitByBranch in the week to make bar chart
+        $examSubmitByBranch = [];
+        $branches = DB::select('select * from submitGroup');
+        foreach ($branches as $branch) {
+            $name = $branch->studentBranch;
+            //If branch name is not in array, add it
+            if (!array_key_exists($name, $examSubmitByBranch)) {
+                $examSubmitByBranch[$name] = 0;
+            }
+            //Get submit count of this branch in this week
+            $examSubmitByBranch[$name] += 1;
+        }
         $stats = array(
             "examCount" => $examCount,
             "questionCount" => $questionCount,
             "examSubmitCount" => $examSubmitCount,
             "examSubmit" => $examSubmit,
-            "submitGroup" => $submitGroup
+            "submitGroup" => $submitGroup,
+            "weeklyExamSubmitCount" => $weekSubmitCount,
+            "examSubmitByBranch" => $examSubmitByBranch
         );
 
         return $stats;
     }
 
-    public function getAdminResults() {
+    public function getAdminResults()
+    {
         $groups = DB::select('select * from submitGroup');
         $submits = DB::select('select * from examSubmit');
         $results = [];
@@ -51,7 +81,8 @@ class AdminController extends Controller {
         return $results;
     }
 
-    public function adminLogin(Request $request) {
+    public function adminLogin(Request $request)
+    {
         $input = $request->getContent();
         $body = json_decode($input, true);
         $username = $body['username'];
@@ -60,7 +91,8 @@ class AdminController extends Controller {
         return 'ok';
     }
 
-    public function createExam(Request $request) {
+    public function createExam(Request $request)
+    {
         $input = $request->getContent();
         $body = json_decode($input, true);
         $name = $body['name'];
@@ -79,7 +111,8 @@ class AdminController extends Controller {
         return $exam;
     }
 
-    public function updateExam(Request $request) {
+    public function updateExam(Request $request)
+    {
         $input = $request->getContent();
         $body = json_decode($input, true);
         $examId = $body['examId'];
@@ -96,7 +129,8 @@ class AdminController extends Controller {
         return $updatedExam;
     }
 
-    public function deleteExam(Request $request) {
+    public function deleteExam(Request $request)
+    {
         $input = $request->getContent();
         $body = json_decode($input, true);
         $examId = $body['examId'];
@@ -111,7 +145,8 @@ class AdminController extends Controller {
         return 'exam deleted';
     }
 
-    public function createQuestion(Request $request) {
+    public function createQuestion(Request $request)
+    {
         $input = $request->getContent();
         $body = json_decode($input, true);
         $examId = $body['examId'];
@@ -131,7 +166,8 @@ class AdminController extends Controller {
         return end($question);
     }
 
-    public function updateQuestion(Request $request) {
+    public function updateQuestion(Request $request)
+    {
         $input = $request->getContent();
         $body = json_decode($input, true);
         $questionId = $body['questionId'];
@@ -148,10 +184,11 @@ class AdminController extends Controller {
         DB::update('update question set text = ?, choice1 = ?, choice2 = ?, answer = ? where id = ?', [$text, $choice1, $choice2, $answer, $questionId]);
         $updatedQuestion = DB::select('select * from question where id = ?', [$questionId])[0];
 
-        return $updaqweqwetedQuestion;
+        return $updatedQuestion;
     }
 
-    public function deleteQuestion(Request $request) {
+    public function deleteQuestion(Request $request)
+    {
         $input = $request->getContent();
         $body = json_decode($input, true);
         $questionId = $body['questionId'];
@@ -165,18 +202,20 @@ class AdminController extends Controller {
         return 'question deleted';
     }
 
-    public function updateSetting(Request $request) {
+    public function updateSetting(Request $request)
+    {
         $input = $request->getContent();
         $body = json_decode($input, true);
         $key = $body['key'];
         $value = $body['value'];
     }
 
-    public function getAdminQuestions() {
-
+    public function getAdminQuestions()
+    {
     }
 
-    public function updateGroup(Request $request) {
+    public function updateGroup(Request $request)
+    {
         $input = $request->getContent();
         $body = json_decode($input, true);
         $groupId = $body['groupId'];
@@ -195,7 +234,8 @@ class AdminController extends Controller {
         return $updatedGroup;
     }
 
-    public function deleteGroup(Request $request) {
+    public function deleteGroup(Request $request)
+    {
         $input = $request->getContent();
         $body = json_decode($input, true);
         $groupId = $body['groupId'];
