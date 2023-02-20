@@ -30,11 +30,12 @@ interface LinkItemProps {
 	name: string;
 	icon: IconType;
 	url: string;
+	admin?: boolean
 }
 const LinkItems: Array<LinkItemProps> = [
 	{ name: 'หน้าหลัก', icon: FiHome, url: '/admin' },
 	{ name: 'ผู้ทำแบบทดสอบ', icon: FiTrendingUp, url: '/admin/tester' },
-	{ name: 'จัดการแบบทดสอบ', icon: FiCompass, url: '/admin/manage' },
+	{ name: 'จัดการแบบทดสอบ', icon: FiCompass, url: '/admin/manage', admin: true },
 	{ name: 'ออกจากระบบ', icon: FiArrowRight, url: '/admin/logout' },
 ];
 
@@ -91,7 +92,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 				<CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
 			</Flex>
 			{LinkItems.map((link) => (
-				<NavItem key={link.name} onClick={() => {
+				<NavItem key={link.name} requiredAdmin={link.admin} onClick={() => {
 					if (link.url == '/admin/logout') {
 						document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
 						router.push('/admin/signin')
@@ -108,11 +109,27 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
 interface NavItemProps extends FlexProps {
 	icon: IconType;
+	requiredAdmin?: boolean
 	children: ReactText;
 }
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, children, requiredAdmin, ...rest }: NavItemProps) => {
+	//Get token cookie 
+	const [isAdmin, setIsAdmin] = React.useState(false)
+	const [show, setShow] = React.useState(false)
+	const router = useRouter();
+	React.useEffect(() => {
+		const token = Number(document.cookie?.split('; ')?.find(row => row.startsWith('token='))?.split('=')[1])
+		setIsAdmin(!!token)
+		setShow(!requiredAdmin || isAdmin)
+		if (requiredAdmin && !isAdmin) {
+			console.log('no admin')
+			//Redirect to home
+			router.push('/admin')
+		}
+	}, [])
+
 	return (
-		<Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+		show ? <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
 			<Flex
 				align="center"
 				p="4"
@@ -138,6 +155,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 				{children}
 			</Flex>
 		</Link>
+			: null
 	);
 };
 

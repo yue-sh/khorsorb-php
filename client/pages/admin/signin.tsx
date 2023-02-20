@@ -6,13 +6,17 @@ import { ENDPOINT_URL } from "../../libs/utils";
 
 function LoginPage() {
 	const [password, setPassword] = useState("");
+	const adminPassword = "1234"
+	const watcherPassword = "4321"
 	const toast = useToast();
 	const router = useRouter();
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		//If input is 1234 add token to cookie and redirect to admin page
-		if (password === "1234") {
-			document.cookie = `token=${password}; path=/`;
+		let loginPerm = -1
+		if (password === adminPassword) loginPerm = 1
+		if (password === watcherPassword) loginPerm = 0
+		if (loginPerm >= 0) {
+			document.cookie = `token=${loginPerm}; path=/`;
 			router.push("/admin");
 			return toast({
 				title: "เข้าสู่ระบบแอดมินสำเร็จ",
