@@ -1,6 +1,6 @@
-import { Modal, ModalOverlay, Button, StatHelpText, Stat, StatLabel, StatNumber, ModalHeader, ModalCloseButton, ModalFooter, ModalContent, ModalBody, Box, Text, Table, Tr, Th, Thead, TableCaption, Tbody, Td, IconButton, Collapse, Grid, GridItem, RadioGroup, Stack, Radio, Select } from "@chakra-ui/react";
+import { Modal, ModalOverlay, Button, StatHelpText, Stat, StatLabel, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverFooter, StatNumber, ModalHeader, ModalCloseButton, ModalFooter, ModalContent, ModalBody, Box, Text, Table, Tr, Th, Thead, TableCaption, Tbody, Td, IconButton, Collapse, Grid, GridItem, RadioGroup, Stack, Radio, Select, ButtonGroup } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { BiSearch } from "react-icons/bi";
+import { BiSearch, BiTrash } from "react-icons/bi";
 import Sidebar from "../../layouts/default";
 import { ENDPOINT_URL } from "../../libs/utils";
 
@@ -124,6 +124,7 @@ function TesterPage() {
 	const [displayData, setDisplayData] = useState({} as any)
 	const [selectFilter, setSelectFilter] = useState('all')
 	const [exams, setExams] = useState([])
+	const [isLoading, setIsLoading] = useState(false)
 	const getAllExam = () => {
 		fetch(ENDPOINT_URL + '/v1/public/exams', {
 			method: 'GET',
@@ -141,8 +142,7 @@ function TesterPage() {
 		}
 		return ''
 	}
-	useEffect(() => {
-		getAllExam()
+	const getResults = () => {
 		fetch(ENDPOINT_URL + '/v1/admin/results', {
 			method: 'GET',
 			headers: {
@@ -158,7 +158,35 @@ function TesterPage() {
 				}
 			))
 		})
+	}
+	useEffect(() => {
+		getAllExam()
+		getResults()
 	}, []);
+
+	const onDelelteButtonClick = (id: string) => {
+		setIsLoading(true)
+		fetch(ENDPOINT_URL + '/v1/admin/group/delete', {
+			method: 'POST',
+			body: JSON.stringify({
+				groupId: id
+			}),
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + document.cookie.split('=')[1]
+			}
+		}).then(res => res.json()).then(res => {
+			setHistory(history.filter((item: any) => item.id != id))
+			setIsLoading(false)
+			getAllExam()
+			getResults()
+		}).catch(err => {
+			setIsLoading(false)
+			getAllExam()
+			getResults()
+		})
+	}
+
 	useEffect(() => {
 		if (modalContent) {
 			setDisplayData(history.find((item: any) => item.id == modalContent))
@@ -272,7 +300,25 @@ function TesterPage() {
 											}
 										</Td>
 										<Td>
-											<IconButton onClick={() => setModalContent(item.id)} colorScheme="blue" aria-label="ตรวจสอบ" icon={<BiSearch />} />
+											<IconButton onClick={() => setModalContent(item.id)} colorScheme="blue" aria-label="ตรวจสอบ" mr="2" icon={<BiSearch />} />
+											<Popover >
+												<PopoverTrigger>
+													<IconButton aria-label="ลบข้อมูลนี้" colorScheme="red" icon={<BiTrash />} />
+												</PopoverTrigger>
+												<PopoverContent textAlign="left">
+													<PopoverHeader fontWeight='semibold'>ลบ</PopoverHeader>
+													<PopoverArrow />
+													<PopoverCloseButton />
+													<PopoverBody>
+														คุณต้องการข้อมูลนี้ใช่หรือไม่
+													</PopoverBody>
+													<PopoverFooter display='flex' justifyContent='flex-end'>
+														<ButtonGroup size='sm'>
+															<Button isLoading={isLoading} onClick={() => onDelelteButtonClick(item.id)} colorScheme='red'>ลบ</Button>
+														</ButtonGroup>
+													</PopoverFooter>
+												</PopoverContent>
+											</Popover>
 										</Td>
 									</Tr>
 								))

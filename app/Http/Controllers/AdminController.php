@@ -97,10 +97,13 @@ class AdminController extends Controller
         $body = json_decode($input, true);
         $name = $body['name'];
         $questions = $body['questions'];
-
         $exist = DB::select('select * from exam where name = ?', [$name]);
-        if ($exist) {
-            return 'exam already exist';
+        $i = 1;
+        while ($exist) {
+            $name = preg_replace('/\(\d+\)$/', '', $name);
+            $name = $name . ' (' . $i . ')';
+            $exist = DB::select('select * from exam where name = ?', [$name]);
+            $i++;
         }
         DB::insert('insert into exam (name) values (?)', [$name]);
         $exam = json_decode(json_encode(DB::select('select * from exam where name = ?', [$name])[0]), true);

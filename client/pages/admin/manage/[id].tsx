@@ -21,13 +21,13 @@ function QuestionCard({ data, reload }: any) {
 	}
 	const onDelelteButtonClick = () => {
 		setIsLoading(true)
-		fetch(ENDPOINT_URL + `/v1/admin/question/delete`, {
+		fetch(ENDPOINT_URL + `/v1/admin/group/delete`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				'Authorization': 'Bearer ' + document.cookie.split('=')[1]
 			},
-			body: JSON.stringify({ questionId: editData.id })
+			body: JSON.stringify({ groupId: editData.id })
 		}).then(() => {
 			setTimeout(() => {
 				setIsLoading(false)
@@ -118,11 +118,10 @@ function QuestionCard({ data, reload }: any) {
 						<PopoverArrow />
 						<PopoverCloseButton />
 						<PopoverBody>
-							คุณต้องการลบคำถามชุดนี้ใช่หรือไม่
+							คุณต้องการลบคำถามนี้ใช่หรือไม่
 						</PopoverBody>
 						<PopoverFooter display='flex' justifyContent='flex-end'>
 							<ButtonGroup size='sm'>
-								<Button isLoading={isLoading} variant='outline'>ยกเลิก</Button>
 								<Button isLoading={isLoading} onClick={onDelelteButtonClick} colorScheme='red'>ลบ</Button>
 							</ButtonGroup>
 						</PopoverFooter>

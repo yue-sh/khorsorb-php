@@ -130,7 +130,7 @@ function TesterPage() {
 									<Tr key={exam.id}>
 										{/* <Td>{exam.id.toString().slice(-6)}</Td> */}
 										<Td>{exam.name}</Td>
-										<Td>{exam.questionCount}</Td>
+										<Td>{exam.questionCount || 0}</Td>
 										<Td>
 											<Stack direction="row">
 												<IconButton isLoading={isLoading} onClick={() => router.push('/admin/manage/' + exam.id)} colorScheme="blue" aria-label="ตรวจสอบ" icon={<BiEdit />} />
@@ -153,7 +153,6 @@ function TesterPage() {
 														</PopoverBody>
 														<PopoverFooter display='flex' justifyContent='flex-end'>
 															<ButtonGroup size='sm'>
-																<Button isLoading={isLoading} variant='outline'>ยกเลิก</Button>
 																<Button isLoading={isLoading} onClick={onDelelteButtonClick} colorScheme='red'>ลบ</Button>
 															</ButtonGroup>
 														</PopoverFooter>

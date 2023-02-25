@@ -24,7 +24,7 @@ class PublicController extends Controller
 
     public function getExams()
     {
-        $exams = DB::select('select * from exam e inner join (select examId, count(*) as questionCount from question group by examId) q on e.id = q.examId');
+        $exams = DB::select('select * from exam left join (select examId, count(*) as questionCount from question group by examId) as questionCount on exam.id = questionCount.examId');
         return $exams;
     }
 
