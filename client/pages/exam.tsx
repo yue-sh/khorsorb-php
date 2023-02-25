@@ -144,7 +144,10 @@ function IndexPage() {
 				const dataQuery = data.map((exam: any) => {
 					return exam
 				})
-				router.push(`/result?data=${btoa(encodeURIComponent(JSON.stringify(dataQuery)))}`)
+				router.push(`/result?data=${btoa(encodeURIComponent(JSON.stringify({
+					list: dataQuery,
+					tester: testerData
+				})))}`)
 			})
 			setIsLoading(false)
 		})
