@@ -118,7 +118,7 @@ function TesterPage() {
 						<TableCaption>ทั้งหมด {exams.length} ชุด</TableCaption>
 						<Thead>
 							<Tr>
-								<Th>รหัส</Th>
+								{/* <Th>รหัส</Th> */}
 								<Th>ชื่อ</Th>
 								<Th>จำนวนข้อ</Th>
 								<Th>จัดการ</Th>
@@ -128,7 +128,7 @@ function TesterPage() {
 							{exams?.length && exams?.map((exam) => {
 								return (
 									<Tr key={exam.id}>
-										<Td>{exam.id.toString().slice(-6)}</Td>
+										{/* <Td>{exam.id.toString().slice(-6)}</Td> */}
 										<Td>{exam.name}</Td>
 										<Td>{exam.questionCount}</Td>
 										<Td>

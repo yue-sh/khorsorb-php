@@ -52,7 +52,13 @@ function IndexPage() {
 									type="text"
 									value={studentId}
 									mb={2}
-									onChange={(e) => setStudentId(e.target.value)}
+									onChange={(e) => {
+										const value = e.target.value
+										if (value.match(/^[0-9]*$/)) {
+											setStudentId(value)
+										}
+									}
+									}
 								/>
 								<FormLabel htmlFor="studentBranch">สาขาวิชา</FormLabel>
 								<Select
