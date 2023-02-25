@@ -92,7 +92,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 				<CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
 			</Flex>
 			{LinkItems.map((link) => (
-				<NavItem key={link.name} requiredAdmin={link.admin} onClick={() => {
+				<NavItem key={link.name} url={link.url} requiredAdmin={link.admin} onClick={() => {
 					if (link.url == '/admin/logout') {
 						document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
 						router.push('/admin/signin')
@@ -109,20 +109,20 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
 interface NavItemProps extends FlexProps {
 	icon: IconType;
+	url: string;
 	requiredAdmin?: boolean
 	children: ReactText;
 }
-const NavItem = ({ icon, children, requiredAdmin, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, children, url, requiredAdmin, ...rest }: NavItemProps) => {
 	//Get token cookie 
-	const [isAdmin, setIsAdmin] = React.useState(false)
 	const [show, setShow] = React.useState(false)
 	const router = useRouter();
 	React.useEffect(() => {
 		const token = Number(document.cookie?.split('; ')?.find(row => row.startsWith('token='))?.split('=')[1])
-		setIsAdmin(!!token)
-		setShow(!requiredAdmin || isAdmin)
-		if (requiredAdmin && !isAdmin) {
-			console.log('no admin')
+		const isAdmin = !!token && token > 0
+		setShow(!requiredAdmin || !!isAdmin)
+		if (requiredAdmin && !isAdmin && router.pathname == url) {
+			console.log('no admin', isAdmin)
 			//Redirect to home
 			router.push('/admin')
 		}
@@ -137,6 +137,7 @@ const NavItem = ({ icon, children, requiredAdmin, ...rest }: NavItemProps) => {
 				borderRadius="lg"
 				role="group"
 				cursor="pointer"
+				bg={router.pathname == url ? '#3850d3' : 'transparent'}
 				_hover={{
 					bg: '#3850d3',
 					color: 'white',
