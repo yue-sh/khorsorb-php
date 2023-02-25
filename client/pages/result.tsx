@@ -21,7 +21,7 @@ function IndexPage() {
 		const data = router.query.data
 		if (data) {
 			try {
-				const decodedData = JSON.parse(atob(data as string))
+				const decodedData = JSON.parse(decodeURIComponent(atob(data as string)))
 				setResultData(decodedData)
 				console.log(decodedData)
 				return
@@ -73,7 +73,7 @@ function IndexPage() {
 				</Box>
 				<Flex justifyContent="center" textAlign="center" py="5">
 					<Button colorScheme="green" size="lg" leftIcon={<FiRepeat />} onClick={() => router.push(`
-					/exam?data=${btoa(JSON.stringify(resultData?.tester))}
+					/exam?data=${btoa(encodeURIComponent(JSON.stringify(resultData?.tester)))}
 					`)}>ทำแบบทดสอบใหม่อีกครั้ง</Button>
 				</Flex>
 				{

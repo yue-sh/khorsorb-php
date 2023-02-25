@@ -28,7 +28,7 @@ function IndexPage() {
 			studentId,
 			studentBranch
 		})
-		router.push(`/exam?data=${btoa(encodedData)}`)
+		router.push(`/exam?data=${btoa(encodeURIComponent(encodedData))}`)
 	}
 
 	return (

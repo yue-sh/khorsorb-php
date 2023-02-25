@@ -144,10 +144,7 @@ function IndexPage() {
 				const dataQuery = data.map((exam: any) => {
 					return exam
 				})
-				router.push(`/result?data=${btoa(JSON.stringify({
-					tester: testerData,
-					list: dataQuery
-				}))}`)
+				router.push(`/result?data=${btoa(encodeURIComponent(JSON.stringify(dataQuery)))}`)
 			})
 			setIsLoading(false)
 		})
@@ -173,7 +170,9 @@ function IndexPage() {
 		const { data } = router.query
 		if (data) {
 			try {
-				setTesterData(JSON.parse(atob(data as string)))
+				console.log('data', data);
+
+				setTesterData(JSON.parse(decodeURIComponent(atob(data as string))))
 				return
 			} catch (e) {
 				console.log('tester data error', e)
