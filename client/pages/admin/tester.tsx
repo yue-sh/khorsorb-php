@@ -272,14 +272,16 @@ function TesterPage() {
 								(selectFilter == 'all' ? history : history.filter((item: any) => item.studentBranch.toLowerCase() == selectFilter)).map((item: any, index) => (
 									<Tr key={index}>
 										<Td>{
-											new Date(item.created_at).toLocaleString('th-TH', {
-												year: 'numeric',
-												month: 'long',
-												day: 'numeric',
-												hour: 'numeric',
-												minute: 'numeric',
-												second: 'numeric'
-											})
+											//+7 for GMT+7
+											new Date(new Date(item.created_at).getTime() + 7 * 60 * 60 * 1000)
+												.toLocaleString('th-TH', {
+													year: 'numeric',
+													month: 'long',
+													day: 'numeric',
+													hour: 'numeric',
+													minute: 'numeric',
+													second: 'numeric'
+												})
 										}</Td>
 										<Td>{item.studentId}</Td>
 										<Td>{item.studentName}</Td>

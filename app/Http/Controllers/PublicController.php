@@ -78,6 +78,7 @@ class PublicController extends Controller
     //$studentId, $studentName, $studentBranch
     public function createGroup(Request $request)
     {
+        date_default_timezone_set('Asia/Bangkok');
         $input = $request->getContent();
         $body = json_decode($input, true);
         $studentId = $body['studentId'];

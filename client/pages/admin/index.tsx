@@ -143,16 +143,16 @@ function AdminPage() {
 							xl: "repeat(4, 1fr)"
 						}} fontSize="lg" gap={6}>
 							<GridItem>
-								<DashCard color="#246dec" title="ผู้ทำแบบทดสอบ" value={statsData?.examSubmitCount} icon={<FiUser />} />
+								<DashCard color="#246dec" title="ผู้ทำแบบทดสอบทั้งหมด" value={statsData?.examSubmitCount} icon={<FiUser />} />
 							</GridItem>
 							<GridItem>
-								<DashCard color="#f5b74f" title="แบบทดสอบ" value={statsData.examCount} icon={<FiFileText />} />
+								<DashCard color="#f5b74f" title="แบบทดสอบทั้งหมด" value={statsData.examCount} icon={<FiFileText />} />
 							</GridItem>
 							<GridItem colSpan={2} />
 							<GridItem colSpan={2}>
 								<Box bg="white" p="4" rounded="md" borderColor="gray.500" boxShadow="md">
 									<Text textAlign="center" mb="1" fontWeight="bold">
-										จำนวนผู้ทำแบบทดสอบ
+										จำนวนผู้ทำแบบทดสอบสัปดาห์นี้
 									</Text>
 									<LineChart datas={statsData?.weeklyExamSubmitCount} />
 								</Box>
@@ -160,7 +160,7 @@ function AdminPage() {
 							<GridItem colSpan={2}>
 								<Box bg="white" p="4" rounded="md" borderColor="gray.500" boxShadow="md">
 									<Text textAlign="center" mb="1" fontWeight="bold">
-										แบ่งผู้ทำแบบทดสอบตามสาขา
+										แบ่งผู้ทำแบบทดสอบตามสาขาทั้งหมด
 									</Text>
 									<BarChart datas={statsData?.examSubmitByBranch} />
 								</Box>

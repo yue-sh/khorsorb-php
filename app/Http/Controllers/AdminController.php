@@ -20,10 +20,9 @@ class AdminController extends Controller
     {
         $examCount = DB::select('select count(*) as count from exam')[0]->count;
         $questionCount = DB::select('select count(*) as count from question')[0]->count;
-        $examSubmitCount = DB::select('select count(*) as count from examSubmit')[0]->count;
         $examSubmit = DB::select('select * from examSubmit');
         $submitGroup = DB::select('select * from submitGroup');
-        //Get monday to sunday of this week and submit count to array to make chart js
+        $examSubmitCount = 0;
         $weekSubmitCount = [];
         $week = [];
         $week[0] = date('Y-m-d', strtotime('monday this week'));
@@ -33,13 +32,30 @@ class AdminController extends Controller
         $week[4] = date('Y-m-d', strtotime('friday this week'));
         $week[5] = date('Y-m-d', strtotime('saturday this week'));
         $week[6] = date('Y-m-d', strtotime('sunday this week'));
+        $week[7] = date('Y-m-d', strtotime('monday next week'));
         for ($i = 0; $i < 7; $i++) {
-            $weekSubmitCount[$i] = DB::select('select count(*) as count from examSubmit where created_at like ?', [$week[$i] . '%'])[0]->count;
+            //Submit group of this week 
+            //Add -7 hr to make it UTC+7
+            $weekSubmitCount[$i] = DB::select('select count(*) as count from submitGroup where created_at >= ? and created_at < ?', [date('Y-m-d H:i:s', strtotime($week[$i] . ' -7 hour')), date('Y-m-d H:i:s', strtotime($week[$i + 1] . ' -7 hour'))])[0]->count;
         }
-        //examSubmitByBranch in the week to make bar chart
         $examSubmitByBranch = [];
-        $branches = DB::select('select * from submitGroup');
+        $branches = $submitGroup;
+        foreach ($submitGroup as $group) {
+            $groupId = $group->id;
+            $group->submitCount = 0;
+            foreach ($examSubmit as $submit) {
+                if ($submit->groupId == $groupId) {
+                    $group->submitCount++;
+                    $examSubmitCount++;
+                    break;
+                }
+            }
+        }
         foreach ($branches as $branch) {
+            //If no submit, skip
+            if ($branch->submitCount == 0) {
+                continue;
+            }
             $name = $branch->studentBranch;
             //If branch name is not in array, add it
             if (!array_key_exists($name, $examSubmitByBranch)) {
@@ -55,7 +71,8 @@ class AdminController extends Controller
             "examSubmit" => $examSubmit,
             "submitGroup" => $submitGroup,
             "weeklyExamSubmitCount" => $weekSubmitCount,
-            "examSubmitByBranch" => $examSubmitByBranch
+            "examSubmitByBranch" => $examSubmitByBranch,
+            "week" => $week
         );
 
         return $stats;
