@@ -21,13 +21,13 @@ function QuestionCard({ data, reload }: any) {
 	}
 	const onDelelteButtonClick = () => {
 		setIsLoading(true)
-		fetch(ENDPOINT_URL + `/v1/admin/group/delete`, {
+		fetch(ENDPOINT_URL + `/v1/admin/question/delete`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				'Authorization': 'Bearer ' + document.cookie.split('=')[1]
 			},
-			body: JSON.stringify({ groupId: editData.id })
+			body: JSON.stringify({ questionId: editData.id })
 		}).then(() => {
 			setTimeout(() => {
 				setIsLoading(false)

@@ -1,1 +1,1 @@
-export const ENDPOINT_URL = 'http://localhost:8000/api';
+export const ENDPOINT_URL = 'http://starchaser-mbpro.local:8000/api';

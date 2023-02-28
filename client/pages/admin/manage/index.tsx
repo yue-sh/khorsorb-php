@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import Sidebar from "../../../layouts/default";
-import { ENDPOINT_URL } from "../../../libs/utils";
+import { ENDPOINT_URL } from "../../../libs/utils"
 function TesterPage() {
 	const [modalContent, setModalContent] = useState(null as any);
 	const [newExam, setNewExam] = useState('')
